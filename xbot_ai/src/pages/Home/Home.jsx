@@ -18,6 +18,20 @@ export default function Home(){
     const {chat, setChat} = useOutletContext();
     const {mode} = useContext(ThemeContext);
 
+    // useEffect(() => {
+    //     const savedChat = JSON.parse(localStorage.getItem('chatHistory'));
+    //     if (savedChat && savedChat.length > 0) {
+    //         setChat(savedChat);
+    //         setChatId(savedChat.length % 2 === 0 ? savedChat.length + 1 : savedChat.length);
+    //     }
+    // }, [setChat]);
+
+    // useEffect(() => {
+    //     if (chat.length > 0) {
+    //         localStorage.setItem('chatHistory', JSON.stringify(chat));
+    //     }
+    // }, [chat]);
+
     const generateResponse = (input) => {
         const response = data.find(
             (item) => input.toLowerCase() == item.question.toLowerCase()
@@ -29,23 +43,56 @@ export default function Home(){
             answer = response.response;
         }
 
-        setChat((prev) => [
-           ...prev,
-           {
-             type: "Human",
-             text: input,
-             time: new Date(),
-             id: chatId
-           },
-           {
-             type: "AI",
-             text: answer,
-             time: new Date(),
-             id: chatId+1
-           }
-        ]);
-      setChatId((prev) => prev + 2);
+        const currentTime = new Date();
+
+        if (isNaN(currentTime)) {
+            console.error('Invalid date encountered in generateResponse');
+            return;
+        }
+
+        // setChat((prev) => [
+        //    ...prev,
+        //    {
+        //      type: "Human",
+        //      text: input,
+        //      time: new Date(),
+        //      id: chatId
+        //    },
+        //    {
+        //      type: "AI",
+        //      text: answer,
+        //      time: new Date(),
+        //      id: chatId+1
+        //    }
+        // ]);
+        const newChat = [
+            {
+                type: "Human",
+                text: input,
+                time: currentTime,
+                id: chatId,
+            },
+            {
+                type: "AI",
+                text: answer,
+                time: currentTime,
+                id: chatId + 1,
+            },
+        ];
+        const updatedChat = [...chat, ...newChat];
+    
+        setChat(updatedChat);
+        setChatId((prev) => prev + 2);
+        localStorage.setItem('chatHistory', JSON.stringify(updatedChat));
     }
+
+    useEffect(() => {
+        const storedChat = JSON.parse(localStorage.getItem('chatHistory'));
+        if (storedChat) {
+            setChat(storedChat);
+            setChatId(storedChat.length ? storedChat[storedChat.length - 1].id + 1 : 1);
+        }
+    }, []);
 
     useEffect(() => {
        listRef.current ?.lastElementChild?.scrollIntoView({ behavior: "smooth" });

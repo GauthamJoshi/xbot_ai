@@ -13,7 +13,7 @@ export default function ChatInput({generateResponse, setScroll, chat, clearChat}
        e.preventDefault();
        generateResponse(input);
        setInput('');
-    //    setScroll((prev) => !prev)
+       setScroll((prev) => !prev)
     }
 
     const handleSave = () => {

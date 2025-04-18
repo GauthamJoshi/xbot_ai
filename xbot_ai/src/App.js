@@ -8,6 +8,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { getThemePallete } from "./theme/ThemePallete";
 import { Grid } from "@mui/material";
 
+import Home from "../src/pages/Home/Home"
+
 function App() {
   const [mode, setMode] = useState(localStorage.getItem("theme") || "light");
   const [chat, setChat] = useState([]);
